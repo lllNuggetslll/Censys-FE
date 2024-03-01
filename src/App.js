@@ -1,24 +1,54 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
+import React, { useState } from "react";
+
+import styled from "@emotion/styled";
+import { useGetToDos } from "./hooks/useGetToDos";
+import Button from "@mui/material/Button";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+
+import { AddModal } from "./components/AddModal";
+import { ViewModal } from "./components/ViewModal";
+
+import { ToDoList } from "./components/ToDoList";
+
+const StyledButton = styled(Button)`
+  svg {
+    margin-right: 16px;
+  }
+`;
 
 function App() {
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [selectedToDoKey, setSelectedToDoKey] = useState("");
+
+  const { isPending, data, isFetching } = useGetToDos();
+
+  if (isPending || isFetching) {
+    return <img src={logo} className="App-logo" alt="logo" />;
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <h1>Another Todo List</h1>
+
+      <StyledButton onClick={() => setIsAddModalOpen(true)} variant="outlined">
+        <AddCircleOutlineIcon />
+        Add Todo!
+      </StyledButton>
+
+      <ToDoList data={data} handleSetSelectedToDoKey={setSelectedToDoKey} />
+
+      <AddModal
+        isAddModalOpen={isAddModalOpen}
+        setIsAddModalOpen={setIsAddModalOpen}
+      />
+
+      <ViewModal
+        selectedToDoKey={selectedToDoKey}
+        setSelectedToDoKey={setSelectedToDoKey}
+      />
+    </>
   );
 }
 
